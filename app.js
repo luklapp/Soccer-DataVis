@@ -3,6 +3,7 @@ var path = require('path');
 var logger = require('morgan');
 
 var app = express();
+var http = require('http').Server(app);
 
 app.use(logger('dev'));
 
@@ -32,4 +33,7 @@ app.use(function(err, req, res, next) {
   });
 });
 
-module.exports = app;
+http.listen(7878, function() {
+  console.log('There we go ♕');
+  console.log('Gladly listening on http://127.0.0.1:9900');
+});
