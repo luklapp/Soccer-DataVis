@@ -7,14 +7,14 @@ var http = require('http').Server(app);
 
 app.use(logger('dev'));
 
-app.get('*', function(req, res) {
-  res.send('Nothing to see here');
-});
-
 // API routes
 const normalizedPath = require("path").join(__dirname, "./apis/");
 require("fs").readdirSync(normalizedPath).forEach(function(file) {
   require(normalizedPath + file + '/routes/routes.js')(app);
+});
+
+app.get('*', function(req, res) {
+  res.send('Nothing to see here');
 });
 
 // catch 404 and forward to error handler
@@ -27,7 +27,7 @@ app.use(function(req, res, next) {
 // production error handler
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
-  res.render('error', {
+  res.send('error', {
     message: err.message,
     error: {}
   });
