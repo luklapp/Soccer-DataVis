@@ -1,3 +1,5 @@
+var hello = require('../api.js');
+
 module.exports = function(app) {
   app.get('/hello', function(req, res){
     if (req.query.name) {
@@ -7,7 +9,11 @@ module.exports = function(app) {
     }
   });
 
+  app.get('/hello/random', function(req, res) {
+    res.send(hello.getRandomGreeting());
+  });
   app.get('/hello/:name', function(req, res){
     res.send(`Hello ${req.params.name}!`);
   });
+
 }
