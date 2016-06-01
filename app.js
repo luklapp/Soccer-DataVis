@@ -10,7 +10,7 @@ app.use(logger('dev'));
 // API routes
 const normalizedPath = require("path").join(__dirname, "./apis/");
 require("fs").readdirSync(normalizedPath).forEach(function(file) {
-  require(normalizedPath + file + '/routes/routes.js')(app);
+  require(normalizedPath + file + '/api.js')(app);
 });
 
 app.get('*', function(req, res) {
@@ -35,5 +35,5 @@ app.use(function(err, req, res, next) {
 
 http.listen(7878, function() {
   console.log('There we go ♕');
-  console.log('Gladly listening on http://127.0.0.1:9900');
+  console.log('Gladly listening on http://127.0.0.1:7878');
 });
