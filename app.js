@@ -7,10 +7,16 @@ var http = require('http').Server(app);
 
 app.use(logger('dev'));
 
-// API routes
+// Load APIs
 const normalizedPath = require("path").join(__dirname, "./apis/");
 require("fs").readdirSync(normalizedPath).forEach(function(file) {
-  require(normalizedPath + file + '/api.js')(app);
+  try {
+    require(normalizedPath + file + '/api.js')(app);
+  }
+  catch (err) {
+    console.log('Appears like an Api module couldn`t be required');
+    console.log(err);
+  }
 });
 
 app.get('*', function(req, res) {
