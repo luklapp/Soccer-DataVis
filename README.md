@@ -7,6 +7,9 @@ This is a light weight and fast setup solution for managing node APIs.
 
 ##Included APIs
  * Hello world
+ * Random Stuff API
+   * Random number
+  
 
 ##Adding APIs
  All APIs have a separate directory in the ./apis directory.
