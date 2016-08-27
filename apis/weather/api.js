@@ -23,7 +23,7 @@ const getWeatherByCity = function(cityName, res) {
   var apiKey = require("./secrets/api-key.js").apiKey;
   var options = {
     host: `api.openweathermap.org`,
-    path: `/data/2.5/weather?q=${cityName}&APPID=${apiKey}`,
+    path: `/data/2.5/weather?q=${cityName}&APPID=${apiKey}&units=metric`,
     port: 80,
     method: "GET"
   }
@@ -35,7 +35,7 @@ const getWeatherByGeolocation = function(long, lat, res) {
   var apiKey = require("./secrets/api-key.js").apiKey;
   var options = {
     host: `api.openweathermap.org`,
-    path: `/data/2.5/weather?lat=${lat}&lon=${long}&APPID=${apiKey}`,
+    path: `/data/2.5/weather?lat=${lat}&lon=${long}&APPID=${apiKey}&units=metric`,
     port: 80,
     method: "GET"
   }
@@ -60,4 +60,3 @@ const requestWeather = function(options, con) {
     });
   }).end();
 }
-
