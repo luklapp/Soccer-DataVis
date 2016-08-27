@@ -28,8 +28,13 @@ You can also add the country code to avoid false responses.
 Get weather by geolocation:
 `/weather/geolocation?longitude=47.8&latitude=13.04`
 
+To specify the unit system:
+`?units=metric`
+
 ####Response
 The API delivers a JSON response or an error message with the according HTTP status code.
+The units default to metric with Kelvin for temperatures.
+
 Please check out OpenWeatherMap's docs for details:
 http://openweathermap.org/current
 
