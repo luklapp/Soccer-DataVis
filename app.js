@@ -31,9 +31,16 @@ app.use(function(req, res, next) {
 });
 
 // production error handler
-app.use(function(err, req, res, next) {
-  res.status(err.status).send(err.message)
-});
+var env = process.env.NODE_ENV || 'dev';
+if (env === 'production') {
+  app.use(function(err, req, res, next) {
+    res.status(err.status || 500);  res.send('error', {
+      message: err.message,
+      error: {}
+    });
+  });
+}
+
 
 http.listen(7878, function() {
   console.log('There we go ♕');
