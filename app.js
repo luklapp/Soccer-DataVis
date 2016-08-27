@@ -19,7 +19,7 @@ require("fs").readdirSync(normalizedPath).forEach(function(file) {
   }
 });
 
-app.get('*', function(req, res) {
+app.get('/', function(req, res) {
   res.send('Nothing to see here');
 });
 
@@ -32,11 +32,7 @@ app.use(function(req, res, next) {
 
 // production error handler
 app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.send('error', {
-    message: err.message,
-    error: {}
-  });
+  res.status(err.status).send(err.message)
 });
 
 http.listen(7878, function() {

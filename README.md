@@ -9,7 +9,29 @@ This is a light weight and fast setup solution for managing node APIs.
  * Hello world
  * Random Stuff API
    * Random number
-  
+ * Weather API - API-Chain from OpenWeatherMap
+
+
+###Weather API
+The Weather API just chains the OpenWeatherMap API and is used for my weather widget.
+As by now the API only provides current weather information.
+
+If you want to use the API please consider deploying your own fork with your own OpenWeatherMap API key.
+
+####Usage
+Get weather by city name:
+`/weather/city/salzburg/`
+
+You can also add the country code to avoid false responses.
+`/weather/city/salzburg,at/`
+
+Get weather by geolocation:
+`/weather/geolocation?longitude=47.8&latitude=13.04`
+
+####Response
+The API delivers a JSON response or an error message with the according HTTP status code.
+Please check out OpenWeatherMap's docs for details:
+http://openweathermap.org/current
 
 ##Adding APIs
  All APIs have a separate directory in the ./apis directory.
@@ -19,12 +41,13 @@ This is a light weight and fast setup solution for managing node APIs.
  `./apis/weather/api.js`:
 
     module.exports = function(app) {
-      app.get('/weather/:city', function(req, res, next) {
-        res.send(getWeatherByCity(req.params.city));
+      app.get('/weather/city/:cityName', function(req, res) {
+        getWeatherByCity(req.params.cityName, res);
       });
 
-      function getWeatherByCity(cityName) {
+      function getWeatherByCity(cityName, res) {
         ...
+        res.send(...);
       }
     }
 
