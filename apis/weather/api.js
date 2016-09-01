@@ -14,12 +14,13 @@ module.exports = function(app) {
 
 const getWeatherByCity = function(req, res) {
   var units = req.query.units;
+  var language = req.query.lang;
   var cityName = req.params.cityName;
 
   var apiKey = require("./secrets/api-key.js").apiKey;
   var options = {
     host: `api.openweathermap.org`,
-    path: `/data/2.5/weather?q=${cityName}&APPID=${apiKey}&units=${units}`,
+    path: `/data/2.5/weather?q=${cityName}&APPID=${apiKey}&units=${units}&lang=${language}`,
     port: 80,
     method: "GET"
   }
@@ -29,15 +30,15 @@ const getWeatherByCity = function(req, res) {
 
 const getWeatherByGeolocation = function(req, res) {
   var units = req.query.units;
+  var language = req.query.lang;
   var long = req.query.longitude;
   var lat = req.query.latitude;
-  var units = req.query.units;
 
   if (long && lat) {
     var apiKey = require("./secrets/api-key.js").apiKey;
     var options = {
       host: `api.openweathermap.org`,
-      path: `/data/2.5/weather?lat=${lat}&lon=${long}&APPID=${apiKey}&units=${units}`,
+      path: `/data/2.5/weather?lat=${lat}&lon=${long}&APPID=${apiKey}&units=${units}&lang=${language}`,
       port: 80,
       method: "GET"
     }
