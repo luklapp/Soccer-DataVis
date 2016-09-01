@@ -4,24 +4,18 @@ module.exports = function(app) {
   });
 
   app.get('/weather/city/:cityName', function(req, res) {
-    var units = req.query.units;
-    getWeatherByCity(req.params.cityName, units, res);
+    getWeatherByCity(req, res);
   });
 
   app.get('/weather/geolocation', function(req, res){
-    var long = req.query.longitude;
-    var lat = req.query.latitude;
-    var units = req.query.units;
-
-    if (long && lat) {
-      getWeatherByGeolocation(long, lat, units, res);
-    } else {
-      res.status(400).send('Longitude and Latitude required!');
-    }
+      getWeatherByGeolocation(req, res);
   });
 }
 
-const getWeatherByCity = function(cityName, units, res) {
+const getWeatherByCity = function(req, res) {
+  var units = req.query.units;
+  var cityName = req.params.cityName;
+
   var apiKey = require("./secrets/api-key.js").apiKey;
   var options = {
     host: `api.openweathermap.org`,
@@ -33,16 +27,26 @@ const getWeatherByCity = function(cityName, units, res) {
   requestWeather(options, res);
 }
 
-const getWeatherByGeolocation = function(long, lat, units, res) {
-  var apiKey = require("./secrets/api-key.js").apiKey;
-  var options = {
-    host: `api.openweathermap.org`,
-    path: `/data/2.5/weather?lat=${lat}&lon=${long}&APPID=${apiKey}&units=${units}`,
-    port: 80,
-    method: "GET"
-  }
+const getWeatherByGeolocation = function(req, res) {
+  var units = req.query.units;
+  var long = req.query.longitude;
+  var lat = req.query.latitude;
+  var units = req.query.units;
 
-  requestWeather(options, res);
+  if (long && lat) {
+    var apiKey = require("./secrets/api-key.js").apiKey;
+    var options = {
+      host: `api.openweathermap.org`,
+      path: `/data/2.5/weather?lat=${lat}&lon=${long}&APPID=${apiKey}&units=${units}`,
+      port: 80,
+      method: "GET"
+    }
+
+    requestWeather(options, res);
+
+  } else {
+    res.status(400).send('Longitude and Latitude required!');
+  }
 }
 
 const requestWeather = function(options, con) {
