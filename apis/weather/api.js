@@ -60,10 +60,44 @@ const requestWeather = function(options, con) {
       var data = JSON.parse(chunk);
 
       if (data.cod === 200) {
-        con.send(data);
+        var fullResp = addCustomIcon(data);
+        con.send(fullResp);
       } else {
         con.status(data.cod).send(data.message);
       }
     });
   }).end();
+}
+
+const addCustomIcon = function(message) {
+  console.log(message);
+  const weatherCode = message.weather[0].id;
+  const dayTime = message.weather[0].icon.slice(-1);
+
+  switch (true) {
+    case (weatherCode === 800):
+      message.customIcon = '01';
+      break;
+    case (weatherCode === 800):
+      message.customIcon = '01';
+      break;
+    case (weatherCode >= 200 && weatherCode <= 299):
+      message.customIcon = '11';
+      break;
+    case ((weatherCode >= 300 && weatherCode <= 399) || (weatherCode >= 520 && weatherCode <= 531)):
+      message.customIcon = '09';
+      break;
+    case (weatherCode >= 500 && weatherCode <= 504):
+      message.customIcon = '10';
+      break;
+    case ((weatherCode >= 600 && weatherCode <= 699) || (weatherCode === 511)):
+      message.customIcon = '13';
+      break;
+    case (weatherCode >= 700 && weatherCode <= 799):
+      message.customIcon = '50';
+      break;
+  }
+
+    message.customIcon += dayTime;
+  return message;
 }
