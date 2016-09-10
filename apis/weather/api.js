@@ -78,10 +78,10 @@ const addCustomIcon = function(message) {
     case (weatherCode === 800):
       message.customIcon = '01';
       break;
-    case (weatherCode === 801):
+    case (weatherCode === 801 || weatherCode === 802):
       message.customIcon = '02';
       break;
-    case (weatherCode === 802 || weatherCode === 803):
+    case (weatherCode === 803):
       message.customIcon = '03';
       break;
     case (weatherCode === 804):
