@@ -30,4 +30,14 @@ module.exports = function(app) {
     });
   });
 
+  app.get('/soccer/goals', function(req, res) {
+    let minuteMin = req.query.minuteMin || 0
+    let minuteMax = req.query.minuteMax || 90
+
+    connection.query('SELECT goal.goal_min, club.club_name, COUNT(goal.goal_min) as count FROM sz_fussball_matches_goal goal LEFT JOIN sz_fussball_club club ON goal.goal_clubID = club.club_id GROUP BY goal.goal_min, goal.goal_clubID', function(err, goals, field) {
+      res.json({goals})
+    });
+
+  });
+
 }
