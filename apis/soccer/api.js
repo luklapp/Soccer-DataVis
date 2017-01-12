@@ -51,4 +51,18 @@ module.exports = function(app) {
 
   });
 
+  app.get('/soccer/cardsByClub', function(req, res) {
+    let minuteMin = parseInt(req.query.minuteMin) || 0
+    let minuteMax = parseInt(req.query.minuteMax) || 90
+
+    var sql = 'SELECT club.club_name, COUNT(card.card_min) as count FROM sz_fussball_matches_card card LEFT JOIN sz_fussball_club club ON card.card_clubID = club.club_id WHERE card.card_min >= ? AND card.card_min <= ? GROUP BY card.card_clubID ORDER BY count DESC';
+    var inserts = [minuteMin, minuteMax];
+    sql = mysql.format(sql, inserts);
+
+    connection.query(sql, function(err, cards, field) {
+      res.json({cards})
+    });
+
+  });
+
 }
