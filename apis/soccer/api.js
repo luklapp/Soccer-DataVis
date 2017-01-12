@@ -1,15 +1,7 @@
 'use strict';
 
 module.exports = function(app) {
- 
-  var mysql      = require('mysql');
-  var connection = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'root',
-    password : 'root',
-    database : 'tableau'
-  });
-
+  var connection = require('./db.js');
   connection.connect();
 
   app.get('/soccer', function(req, res) {
@@ -36,6 +28,16 @@ module.exports = function(app) {
 
     connection.query('SELECT goal.goal_min, club.club_name, COUNT(goal.goal_min) as count FROM sz_fussball_matches_goal goal LEFT JOIN sz_fussball_club club ON goal.goal_clubID = club.club_id GROUP BY goal.goal_min, goal.goal_clubID', function(err, goals, field) {
       res.json({goals})
+    });
+
+  });
+
+  app.get('/soccer/cards', function(req, res) {
+    let minuteMin = req.query.minuteMin || 0
+    let minuteMax = req.query.minuteMax || 90
+
+    connection.query('SELECT card.card_min, club.club_name, COUNT(card.card_min) as count FROM sz_fussball_matches_card card LEFT JOIN sz_fussball_club club ON card.card_clubID = club.club_id GROUP BY card.card_min, card.card_clubID', function(err, cards, field) {
+      res.json({cards})
     });
 
   });
