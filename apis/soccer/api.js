@@ -70,4 +70,17 @@ module.exports = function(app) {
 
   });
 
+  app.get('/soccer/goalsByClub', function(req, res) {
+    let minuteMin = parseInt(req.query.minuteMin) || 0
+    let minuteMax = parseInt(req.query.minuteMax) || 90
+
+    var sql = 'SELECT club.club_name, COUNT(goal.goal_min) as count FROM sz_fussball_matches_goal goal LEFT JOIN sz_fussball_club club ON goal.goal_clubID = club.club_id WHERE goal.goal_min >= ? AND goal.goal_min <= ? GROUP BY goal.goal_clubID ORDER BY count DESC';
+    var inserts = [minuteMin, minuteMax];
+    sql = mysql.format(sql, inserts);
+
+    connection.query(sql, function(err, goals, field) {
+      res.json({goals})
+    });
+
+  });
 }
