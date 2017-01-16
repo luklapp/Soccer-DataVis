@@ -159,25 +159,25 @@ module.exports = function(app) {
     let minuteMin = parseInt(req.query.minuteMin) || 0
     let minuteMax = parseInt(req.query.minuteMax) || 90
 
-    var sql = `SELECT goal.goal_clubID as clubId, club.club_name,  
-                      COUNT(*)/(SELECT COUNT(DISTINCT spiel_id) FROM sz_fussball_matches_goal WHERE goal_clubID = goal.goal_clubID) as avgGoals,
+    var sql = `SELECT goal.goal_clubID as id, club.club_name,  
+                      COUNT(*)/(SELECT COUNT(DISTINCT spiel_id) FROM sz_fussball_matches_goal WHERE goal_clubID = goal.goal_clubID) as y,
                       (SELECT COUNT(*)/(SELECT COUNT(DISTINCT spiel_id) FROM sz_fussball_matches_card WHERE card_clubID = goal.goal_clubID)
                         FROM sz_fussball_matches_card
                         WHERE card_clubID = goal.goal_clubID AND card_min >= ? AND card_min <= ?
-                        GROUP BY  card_clubID) as avgCards
+                        GROUP BY  card_clubID) as x
                       FROM sz_fussball_matches_goal goal
                       LEFT JOIN sz_fussball_club club ON goal.goal_clubID = club.club_id 
                       WHERE goal.goal_min >= ? AND goal.goal_min <= ?
                       GROUP BY goal.goal_clubID 
-                      ORDER BY avgGoals DESC
+                      ORDER BY y DESC
     `;
 
     sql = mysql.format(sql, [minuteMin, minuteMax, minuteMin, minuteMax]);
 
     connection.query(sql, function(err, values, field) { 
       res.json(values);
-    })
+    });
 
-  })
+  });
 
 }
