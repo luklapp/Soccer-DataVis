@@ -87,34 +87,63 @@ module.exports = function(app) {
   app.get('/soccer/cardsByCountry', function(req, res) {
     let minuteMin = parseInt(req.query.minuteMin) || 0
     let minuteMax = parseInt(req.query.minuteMax) || 90
-    let limit = parseInt(req.query.limit);
+    let limit = parseInt(req.query.limit) || 20;
+    let cards = [];
 
-    var sql = `SELECT country.count_name, COUNT(card.card_min) as count 
-              FROM sz_fussball_matches_card card 
-                INNER JOIN sz_fussball_player player 
-                  ON player.pl_id = card.card_playerID
-                INNER JOIN sz_fussball_country country
-                  ON country.count_id = player.pl_countryid
-                WHERE (card.card_min >= ? AND card.card_min <= ? ) GROUP BY player.pl_countryid ORDER BY count DESC `;
+    for (let i = 1; i <= 3; i++) {
+      var sql = `SELECT country.count_name, COUNT(card.card_min) as count, card.card_art
+                  FROM sz_fussball_matches_card card
+                    INNER JOIN sz_fussball_player player
+                      ON player.pl_id = card.card_playerID
+                    INNER JOIN sz_fussball_country country
+                      ON country.count_id = player.pl_countryid
+                    WHERE (card.card_min >= ? AND card.card_min <= ?) AND card.card_art = ? GROUP BY player.pl_countryid ORDER BY count DESC;`;
 
-    let inserts;
+      let inserts = [minuteMin, minuteMax, i];
+      sql = mysql.format(sql, inserts);
+      console.log(sql);
 
-    if (limit > 0 ) {
-      sql += ` LIMIT ?;`;
-      inserts = [minuteMin, minuteMax, limit];
-    } else {
-      sql += `;`;
-      inserts = [minuteMin, minuteMax];
+      connection.query(sql, function(err, data, field) {
+        for (let card in data) {
+          data[card].cr = card;
+        }
+        cards.push(data);
+        done();
+      });
+
     }
-    sql = mysql.format(sql, inserts);
-    console.log(sql);
 
-    connection.query(sql, function(err, cards, field) {
-      for (let card in cards) {
-        cards[card].cr = card;
+    function done(data) {
+      if (cards.length === 3) {
+        var sql = `SELECT country.count_name, COUNT(card.card_min) as count
+                    FROM sz_fussball_matches_card card
+                      INNER JOIN sz_fussball_player player
+                        ON player.pl_id = card.card_playerID
+                      INNER JOIN sz_fussball_country country
+                        ON country.count_id = player.pl_countryid
+                      WHERE (card.card_min >= ? AND card.card_min <= ?) GROUP BY player.pl_countryid ORDER BY count DESC LIMIT ?;`;
+
+        let inserts = [minuteMin, minuteMax, limit];
+        sql = mysql.format(sql, inserts);
+        console.log(sql);
+
+        connection.query(sql, function(err, data, field) {
+          for (let card in data) {
+            data[card].cr = card;
+          }
+          cards.push(data);
+          done();
+        });
+
+      } else if (cards.length === 4) {
+        for (let country in cards[3]) {
+          cards[3][country].card1 = cards[0][country].count;
+          cards[3][country].card2 = cards[1][country].count;
+          cards[3][country].card3 = cards[2][country].count;
+        }
+        res.json(cards[3]);
       }
-      res.json(cards);
-    });
+    }
 
   });
 
