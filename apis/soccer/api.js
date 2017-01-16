@@ -60,7 +60,7 @@ module.exports = function(app) {
     let minuteMin = parseInt(req.query.minuteMin) || 0
     let minuteMax = parseInt(req.query.minuteMax) || 90
 
-    var sql = 'SELECT club.club_name, COUNT(card.card_min) as count FROM sz_fussball_matches_card card LEFT JOIN sz_fussball_club club ON card.card_clubID = club.club_id WHERE card.card_min >= ? AND card.card_min <= ? GROUP BY card.card_clubID ORDER BY count DESC';
+    var sql = 'SELECT club.club_name as name, COUNT(card.card_min) as count FROM sz_fussball_matches_card card LEFT JOIN sz_fussball_club club ON card.card_clubID = club.club_id WHERE card.card_min >= ? AND card.card_min <= ? GROUP BY card.card_clubID ORDER BY count DESC';
     var inserts = [minuteMin, minuteMax];
     sql = mysql.format(sql, inserts);
 
@@ -74,7 +74,7 @@ module.exports = function(app) {
     let minuteMin = parseInt(req.query.minuteMin) || 0
     let minuteMax = parseInt(req.query.minuteMax) || 90
 
-    var sql = 'SELECT club.club_name, COUNT(goal.goal_min) as count FROM sz_fussball_matches_goal goal LEFT JOIN sz_fussball_club club ON goal.goal_clubID = club.club_id WHERE goal.goal_min >= ? AND goal.goal_min <= ? GROUP BY goal.goal_clubID ORDER BY count DESC';
+    var sql = 'SELECT club.club_name as name, COUNT(goal.goal_min) as count FROM sz_fussball_matches_goal goal LEFT JOIN sz_fussball_club club ON goal.goal_clubID = club.club_id WHERE goal.goal_min >= ? AND goal.goal_min <= ? GROUP BY goal.goal_clubID ORDER BY count DESC';
     var inserts = [minuteMin, minuteMax];
     sql = mysql.format(sql, inserts);
 
@@ -91,7 +91,7 @@ module.exports = function(app) {
     let cards = [];
 
     for (let i = 1; i <= 3; i++) {
-      var sql = `SELECT country.count_name, COUNT(card.card_min) as count, card.card_art
+      var sql = `SELECT country.count_name as name, COUNT(card.card_min) as count, card.card_art
                   FROM sz_fussball_matches_card card
                     INNER JOIN sz_fussball_player player
                       ON player.pl_id = card.card_playerID
@@ -115,7 +115,7 @@ module.exports = function(app) {
 
     function done(data) {
       if (cards.length === 3) {
-        var sql = `SELECT country.count_name, COUNT(card.card_min) as count
+        var sql = `SELECT country.count_name as name, COUNT(card.card_min) as count
                     FROM sz_fussball_matches_card card
                       INNER JOIN sz_fussball_player player
                         ON player.pl_id = card.card_playerID
@@ -154,7 +154,7 @@ module.exports = function(app) {
 
     console.log('Limit', limit);
 
-    var sql = `SELECT country.count_name, COUNT(goal.goal_min) as count 
+    var sql = `SELECT country.count_name as name, COUNT(goal.goal_min) as count 
                 FROM sz_fussball_matches_goal goal 
                   INNER JOIN sz_fussball_player player 
                     ON player.pl_id = goal.goal_playerID
