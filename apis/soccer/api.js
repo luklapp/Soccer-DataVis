@@ -83,4 +83,75 @@ module.exports = function(app) {
     });
 
   });
+
+  app.get('/soccer/cardsByCountry', function(req, res) {
+    let minuteMin = parseInt(req.query.minuteMin) || 0
+    let minuteMax = parseInt(req.query.minuteMax) || 90
+    let limit = parseInt(req.query.limit);
+
+    var sql = `SELECT country.count_name, COUNT(card.card_min) as count 
+              FROM sz_fussball_matches_card card 
+                INNER JOIN sz_fussball_player player 
+                  ON player.pl_id = card.card_playerID
+                INNER JOIN sz_fussball_country country
+                  ON country.count_id = player.pl_countryid
+                WHERE (card.card_min >= ? AND card.card_min <= ? ) GROUP BY player.pl_countryid ORDER BY count DESC `;
+
+    let inserts;
+
+    if (limit > 0 ) {
+      sql += ` LIMIT ?;`;
+      inserts = [minuteMin, minuteMax, limit];
+    } else {
+      sql += `;`;
+      inserts = [minuteMin, minuteMax];
+    }
+    sql = mysql.format(sql, inserts);
+    console.log(sql);
+
+    connection.query(sql, function(err, cards, field) {
+      for (let card in cards) {
+        cards[card].cr = card;
+      }
+      res.json({cards})
+    });
+
+  });
+
+  app.get('/soccer/goalsByCountry', function(req, res) {
+    let minuteMin = parseInt(req.query.minuteMin) || 0
+    let minuteMax = parseInt(req.query.minuteMax) || 90
+    let limit = parseInt(req.query.limit);
+
+    console.log('Limit', limit);
+
+    var sql = `SELECT country.count_name, COUNT(goal.goal_min) as count 
+                FROM sz_fussball_matches_goal goal 
+                  INNER JOIN sz_fussball_player player 
+                    ON player.pl_id = goal.goal_playerID
+                  INNER JOIN sz_fussball_country country
+                    ON country.count_id = player.pl_countryid
+                  WHERE (goal.goal_min >= ? AND goal.goal_min <= ?) GROUP BY player.pl_countryid ORDER BY count DESC
+              `;
+
+    let inserts;
+
+    if (limit > 0 ) {
+      sql += ` LIMIT ?;`;
+      inserts = [minuteMin, minuteMax, limit];
+    } else {
+      sql += `;`;
+      inserts = [minuteMin, minuteMax];
+    }
+    sql = mysql.format(sql, inserts);
+    console.log(sql);
+
+    connection.query(sql, function(err, goals, field) {
+      for (let goal in goals) {
+        goals[goal].cr = goal;
+      }
+      res.json({goals})
+    });
+
+  });
 }
