@@ -37,7 +37,7 @@ module.exports = function(app) {
     sql = mysql.format(sql, inserts);
 
     connection.query(sql, function(err, goals, field) {
-      res.json({goals})
+      res.json(goals)
     });
 
   });
@@ -51,7 +51,7 @@ module.exports = function(app) {
     sql = mysql.format(sql, inserts);
 
     connection.query(sql, function(err, cards, field) {
-      res.json({cards})
+      res.json(cards)
     });
 
   });
@@ -65,7 +65,7 @@ module.exports = function(app) {
     sql = mysql.format(sql, inserts);
 
     connection.query(sql, function(err, cards, field) {
-      res.json({cards})
+      res.json(cards)
     });
 
   });
@@ -79,7 +79,7 @@ module.exports = function(app) {
     sql = mysql.format(sql, inserts);
 
     connection.query(sql, function(err, goals, field) {
-      res.json({goals})
+      res.json(goals)
     });
 
   });
@@ -113,7 +113,7 @@ module.exports = function(app) {
       for (let card in cards) {
         cards[card].cr = card;
       }
-      res.json({cards})
+      res.json(cards);
     });
 
   });
@@ -150,7 +150,7 @@ module.exports = function(app) {
       for (let goal in goals) {
         goals[goal].cr = goal;
       }
-      res.json({goals})
+      res.json(goals)
     });
 
   });
