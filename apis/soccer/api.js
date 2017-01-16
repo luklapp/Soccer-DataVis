@@ -156,8 +156,11 @@ module.exports = function(app) {
   });
 
   app.get('/soccer/avgGoalsCards', function(req, res) {
+
     let minuteMin = parseInt(req.query.minuteMin) || 0
     let minuteMax = parseInt(req.query.minuteMax) || 90
+    let countryId = parseInt(req.query.country)
+    let query
 
     var sql = `SELECT goal.goal_clubID as id, club.club_name,  
                       COUNT(*)/(SELECT COUNT(DISTINCT spiel_id) FROM sz_fussball_matches_goal WHERE goal_clubID = goal.goal_clubID) as y,
@@ -168,13 +171,21 @@ module.exports = function(app) {
                       FROM sz_fussball_matches_goal goal
                       LEFT JOIN sz_fussball_club club ON goal.goal_clubID = club.club_id 
                       WHERE goal.goal_min >= ? AND goal.goal_min <= ?
-                      GROUP BY goal.goal_clubID 
-                      ORDER BY y DESC
-    `;
+              `;
 
-    sql = mysql.format(sql, [minuteMin, minuteMax, minuteMin, minuteMax]);
+    if(!isNaN(countryId)) {
+      sql += ' AND club.club_countid = ? '
+    }
 
-    connection.query(sql, function(err, values, field) { 
+    sql += ' GROUP BY goal.goal_clubID ORDER BY y DESC';
+
+    if(!isNaN(countryId)) {
+      query = mysql.format(sql, [minuteMin, minuteMax, minuteMin, minuteMax, countryId]);  
+    } else {
+      query = mysql.format(sql, [minuteMin, minuteMax, minuteMin, minuteMax]);
+    }
+
+    connection.query(query, function(err, values, field) { 
       res.json(values);
     });
 
